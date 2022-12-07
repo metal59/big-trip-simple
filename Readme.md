@@ -1,7 +1,7 @@
 # Проект «Большое путешествие (простой)»
 
 * Студент: [Matvey Nekrasov](https://up.htmlacademy.ru/ecmascript/19/user/1427725).
-* Наставник: `Неизвестно`.
+* Наставник: [Михаил Кислый](https://htmlacademy.ru/profile/id1118577).
 
 ---
 
