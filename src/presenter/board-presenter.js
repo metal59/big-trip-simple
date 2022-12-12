@@ -20,7 +20,7 @@ export default class BoardPresenter {
     render(new PointEditView(), this.tripListComponent.getElement());
 
     for (let i = 0; i < this.boardPoints.length; i++) {
-      render(new PointView(), this.tripListComponent.getElement());
+      render(new PointView({ point: this.boardPoints[i] }), this.tripListComponent.getElement());
     }
   }
 }
