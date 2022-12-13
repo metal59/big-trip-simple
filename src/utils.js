@@ -1,3 +1,6 @@
 const getRandomArrayElement = (items) => items[Math.floor(Math.random() * items.length)];
 
-export { getRandomArrayElement };
+const capitalizeFirstLetter = (string) => string.charAt(0)
+  .toUpperCase() + string.slice(1);
+
+export { getRandomArrayElement, capitalizeFirstLetter };

@@ -6,7 +6,7 @@ const mockPoints = [
     dateFrom: new Date('2022-01-01T05:30'),
     dateTo: new Date('2022-01-02T21:45'),
     destination: 0,
-    offers: [],
+    offers: [1, 2],
     type: 'taxi'
   },
   {
@@ -40,4 +40,8 @@ function getRandomPoint() {
   return point;
 }
 
-export { getRandomPoint };
+function getPoints() {
+  return mockPoints;
+}
+
+export { getPoints, getRandomPoint };

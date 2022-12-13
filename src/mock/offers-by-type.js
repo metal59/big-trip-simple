@@ -1,7 +1,7 @@
 const mockOffersByType = [
   {
     type: 'taxi',
-    offers: [0, 1]
+    offers: [0, 1, 2, 3]
   },
   {
     type: 'bus',
