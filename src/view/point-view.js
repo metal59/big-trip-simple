@@ -1,28 +1,27 @@
 import { createElement } from '../render.js';
 import dayjs from 'dayjs';
 
-function createPointOffersTemplate(pointOffers, allOffers) {
+function createPointOffersTemplate({ pointOffers, allOffers }) {
   if (pointOffers.length === 0) {
     return '<span class="event__offer-title">No additional offers</span>';
   }
 
   return pointOffers.map((pointOfferId) => {
     const pointOffer = allOffers.find((offer) => offer.id === pointOfferId);
-    return (`
-    <li class="event__offer">
+    return (`<li class="event__offer">
       <span class="event__offer-title">${pointOffer.title}</span>
       &plus;&euro;&nbsp;
       <span class="event__offer-price">${pointOffer.price}</span>
     </li>`);
   }).join('');
 }
-
+//
 function createPointTemplate(data) {
-  const { point, destinations } = data;
-  const { basePrice, dateFrom, dateTo, destination, type } = point;
-  const destinationName = destinations.find((dest) => dest.id === destination).name;
-  const allOffers = data.offers;
+  const point = data.point;
+  const { basePrice, dateFrom, dateTo, type } = point;
+  const destination = data.destinations.find((dest) => dest.id === point.destination);
   const pointOffers = point.offers;
+  const allOffers = data.offers;
 
   return (
     `
@@ -32,7 +31,7 @@ function createPointTemplate(data) {
         <div class="event__type">
           <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
         </div>
-        <h3 class="event__title">${type} ${destinationName}</h3>
+        <h3 class="event__title">${type} ${destination.name}</h3>
         <div class="event__schedule">
           <p class="event__time">
             <time class="event__start-time" datetime="${dayjs(dateFrom).format('YYYY-MM-DDTHH:mm')}">${dayjs(dateFrom).format('HH:mm')}</time>
@@ -45,7 +44,7 @@ function createPointTemplate(data) {
         </p>
         <h4 class="visually-hidden">Offers:</h4>
         <ul class="event__selected-offers">
-          ${createPointOffersTemplate(pointOffers, allOffers)}
+          ${createPointOffersTemplate({pointOffers, allOffers})}
         </ul>
         <button class="event__rollup-btn" type="button">
           <span class="visually-hidden">Open event</span>
