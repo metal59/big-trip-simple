@@ -1,19 +1,28 @@
 import { createElement } from '../render.js';
 import dayjs from 'dayjs';
 
-function createPointOffersTemplate(offers) {
-  return offers.length > 0 ? offers.map(({ title, price }) => (`
+function createPointOffersTemplate(pointOffers, allOffers) {
+  if (pointOffers.length === 0) {
+    return '<span class="event__offer-title">No additional offers</span>';
+  }
+
+  return pointOffers.map((pointOfferId) => {
+    const pointOffer = allOffers.find((offer) => offer.id === pointOfferId);
+    return (`
     <li class="event__offer">
-    <span class="event__offer-title">${title}</span>
-    &plus;&euro;&nbsp;
-    <span class="event__offer-price">${price}</span>
-    </li>`))
-    .join('') :
-    '<span class="event__offer-title">No additional offers</span>';
+      <span class="event__offer-title">${pointOffer.title}</span>
+      &plus;&euro;&nbsp;
+      <span class="event__offer-price">${pointOffer.price}</span>
+    </li>`);
+  }).join('');
 }
 
-function createPointTemplate(point) {
-  const { basePrice, dateFrom, dateTo, destination, type, offers } = point;
+function createPointTemplate(data) {
+  const { point, destinations } = data;
+  const { basePrice, dateFrom, dateTo, destination, type } = point;
+  const destinationName = destinations.find((dest) => dest.id === destination).name;
+  const allOffers = data.offers;
+  const pointOffers = point.offers;
 
   return (
     `
@@ -23,7 +32,7 @@ function createPointTemplate(point) {
         <div class="event__type">
           <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
         </div>
-        <h3 class="event__title">${type} ${destination.name}</h3>
+        <h3 class="event__title">${type} ${destinationName}</h3>
         <div class="event__schedule">
           <p class="event__time">
             <time class="event__start-time" datetime="${dayjs(dateFrom).format('YYYY-MM-DDTHH:mm')}">${dayjs(dateFrom).format('HH:mm')}</time>
@@ -36,7 +45,7 @@ function createPointTemplate(point) {
         </p>
         <h4 class="visually-hidden">Offers:</h4>
         <ul class="event__selected-offers">
-          ${createPointOffersTemplate(offers)}
+          ${createPointOffersTemplate(pointOffers, allOffers)}
         </ul>
         <button class="event__rollup-btn" type="button">
           <span class="visually-hidden">Open event</span>
@@ -48,12 +57,12 @@ function createPointTemplate(point) {
 }
 
 export default class PointView {
-  constructor({ point }) {
-    this.point = point;
+  constructor(data) {
+    this.data = data;
   }
 
   getTemplate() {
-    return createPointTemplate(this.point);
+    return createPointTemplate(this.data);
   }
 
   getElement() {
