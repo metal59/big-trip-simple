@@ -37,8 +37,8 @@ const mockOffersByType = [
   },
 ];
 
-function getOffersByType(type) {
-  return mockOffersByType.find((offer) => offer.type === type);
+function getOffersByType() {
+  return mockOffersByType;
 }
 
 export { getOffersByType };

@@ -45,8 +45,8 @@ const mockDestinations = [
   },
 ];
 
-function getDestinationById(id) {
-  return mockDestinations.find((dest) => dest.id === id);
+function getDestinations() {
+  return mockDestinations;
 }
 
-export { getDestinationById };
+export { getDestinations };

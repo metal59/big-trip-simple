@@ -26,8 +26,8 @@ const mockOffers = [
   },
 ];
 
-function getOfferById(id) {
-  return mockOffers.find((offer) => offer.id === id);
+function getOffers() {
+  return mockOffers;
 }
 
-export { getOfferById };
+export { getOffers };
