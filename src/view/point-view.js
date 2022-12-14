@@ -15,7 +15,7 @@ function createPointOffersTemplate({ pointOffers, allOffers }) {
     </li>`);
   }).join('');
 }
-//
+
 function createPointTemplate(data) {
   const point = data.point;
   const { basePrice, dateFrom, dateTo, type } = point;
