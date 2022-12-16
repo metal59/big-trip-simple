@@ -35,6 +35,32 @@ export default class BoardPresenter {
 
   #renderPoint(point = null) {
     const pointComponent = new PointView(this.#getPointViewData(point));
+    const pointEditComponent = new PointEditView(this.#getPointViewData(point));
+
+    const replaceEventToForm = () => {
+      this.#tripListComponent.element.replaceChild(pointEditComponent.element, pointComponent.element);
+    };
+
+    const replaceFormToEvent = () => {
+      this.#tripListComponent.element.replaceChild(pointComponent.element, pointEditComponent.element);
+    };
+
+    pointComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+      replaceEventToForm();
+    });
+
+    pointEditComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+      replaceFormToEvent();
+    });
+
+    pointEditComponent.element.querySelector('.event__reset-btn').addEventListener('click', () => {
+      replaceFormToEvent();
+    });
+
+    pointEditComponent.element.querySelector('form').addEventListener('submit', (evt) => {
+      evt.preventDefault();
+      replaceFormToEvent();
+    });
 
     render(pointComponent, this.#tripListComponent.element);
   }
