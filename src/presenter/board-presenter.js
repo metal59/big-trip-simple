@@ -23,16 +23,7 @@ export default class BoardPresenter {
   }
 
   init() {
-    if (this.#points.length === 0) {
-      render(new NoPointView(), this.#boardContainer);
-      return;
-    }
-
-    render(new SortView(), this.#boardContainer);
-    render(this.#tripListComponent, this.#boardContainer);
-    for (let i = 0; i < this.#points.length; i++) {
-      this.#renderPoint(this.#points[i]);
-    }
+    this.#renderBoard();
   }
 
   #getPointViewData(point = null) {
@@ -81,5 +72,18 @@ export default class BoardPresenter {
     });
 
     render(pointComponent, this.#tripListComponent.element);
+  }
+
+  #renderBoard() {
+    if (this.#points.length === 0) {
+      render(new NoPointView(), this.#boardContainer);
+      return;
+    }
+
+    render(new SortView(), this.#boardContainer);
+    render(this.#tripListComponent, this.#boardContainer);
+    for (let i = 0; i < this.#points.length; i++) {
+      this.#renderPoint(this.#points[i]);
+    }
   }
 }
