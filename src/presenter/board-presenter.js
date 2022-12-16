@@ -2,6 +2,7 @@ import SortView from '../view/sort-view.js';
 import TripListView from '../view/trip-list-view.js';
 import PointEditView from '../view/point-edit-view.js';
 import PointView from '../view/point-view.js';
+import NoPointView from '../view/no-point-view.js';
 import { render } from '../render.js';
 
 export default class BoardPresenter {
@@ -22,6 +23,11 @@ export default class BoardPresenter {
   }
 
   init() {
+    if (this.#points.length === 0) {
+      render(new NoPointView(), this.#boardContainer);
+      return;
+    }
+
     render(new SortView(), this.#boardContainer);
     render(this.#tripListComponent, this.#boardContainer);
     for (let i = 0; i < this.#points.length; i++) {

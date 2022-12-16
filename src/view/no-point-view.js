@@ -4,7 +4,7 @@ function createTripMessageTemplate() {
   return '<p class="trip-events__msg">Click New Event to create your first point</p>';
 }
 
-export default class TripMessageView {
+export default class NoPointView {
   #element = null;
 
   get template() {
