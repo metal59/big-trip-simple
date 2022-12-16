@@ -21,17 +21,21 @@ export default class BoardPresenter {
     };
   }
 
-  getPointViewData(point = null) {
-    return Object.assign({}, { point }, this.#pointViewCommonData);
-  }
-
   init() {
     render(new SortView(), this.#boardContainer);
     render(this.#tripListComponent, this.#boardContainer);
-    render(new PointEditView(this.getPointViewData()), this.#tripListComponent.element);
-    render(new PointEditView(this.getPointViewData(this.#points[0])), this.#tripListComponent.element);
-    for (let i = 1; i < this.#points.length; i++) {
-      render(new PointView(this.getPointViewData(this.#points[i])), this.#tripListComponent.element);
+    for (let i = 0; i < this.#points.length; i++) {
+      this.#renderPoint(this.#points[i]);
     }
+  }
+
+  #getPointViewData(point = null) {
+    return Object.assign({}, { point }, this.#pointViewCommonData);
+  }
+
+  #renderPoint(point = null) {
+    const pointComponent = new PointView(this.#getPointViewData(point));
+
+    render(pointComponent, this.#tripListComponent.element);
   }
 }
