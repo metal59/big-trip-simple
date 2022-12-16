@@ -56,23 +56,26 @@ function createPointTemplate(data) {
 }
 
 export default class PointView {
+  #element = null;
+  #data = null;
+
   constructor(data) {
-    this.data = data;
+    this.#data = data;
   }
 
-  getTemplate() {
-    return createPointTemplate(this.data);
+  get template() {
+    return createPointTemplate(this.#data);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
     }
 
-    return this.element;
+    return this.#element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
   }
 }
