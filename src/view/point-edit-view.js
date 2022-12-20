@@ -1,4 +1,4 @@
-import { createElement } from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import { POINT_TYPES } from '../const.js';
 import dayjs from 'dayjs';
 import { capitalizeFirstLetter } from '../utils.js';
@@ -66,7 +66,7 @@ function createPointEditDestinationTemplate(destination) {
   const photosTape = destination.pictures.length === 0 ? '' : `
     <div class="event__photos-container">
       <div class="event__photos-tape">
-        ${destination.pictures.map(({src, description}) => `<img class="event__photo" src="${src}" alt="${description}">`)}
+        ${destination.pictures.map(({ src, description }) => `<img class="event__photo" src="${src}" alt="${description}">`)}
       </div>
     </div>
   `;
@@ -145,34 +145,22 @@ function createPointEditTemplate(data) {
           </button>
           `}
         </header>
-        ${createPointEditOffersDestinationTemplate({point, destination, allOffers, offersByType})}
+        ${createPointEditOffersDestinationTemplate({ point, destination, allOffers, offersByType })}
       </form>
     </li>
     `
   );
 }
 
-export default class PointEditView {
-  #element = null;
+export default class PointEditView extends AbstractView {
   #data = null;
 
   constructor(data) {
+    super();
     this.#data = data;
   }
 
   get template() {
     return createPointEditTemplate(this.#data);
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }
