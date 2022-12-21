@@ -44,7 +44,7 @@ function createPointTemplate(data) {
         </p>
         <h4 class="visually-hidden">Offers:</h4>
         <ul class="event__selected-offers">
-          ${createPointOffersTemplate({pointOffers, allOffers})}
+          ${createPointOffersTemplate({ pointOffers, allOffers })}
         </ul>
         <button class="event__rollup-btn" type="button">
           <span class="visually-hidden">Open event</span>
@@ -58,7 +58,7 @@ function createPointTemplate(data) {
 export default class PointView extends AbstractView {
   #data = null;
 
-  constructor(data) {
+  constructor({ data }) {
     super();
     this.#data = data;
   }

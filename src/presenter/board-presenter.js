@@ -31,8 +31,9 @@ export default class BoardPresenter {
   }
 
   #renderPoint(point = null) {
-    const pointComponent = new PointView(this.#getPointViewData(point));
-    const pointEditComponent = new PointEditView(this.#getPointViewData(point));
+    const data = this.#getPointViewData(point);
+    const pointComponent = new PointView({ data });
+    const pointEditComponent = new PointEditView({ data });
 
     const replaceEventToForm = () => {
       this.#tripListComponent.element.replaceChild(pointEditComponent.element, pointComponent.element);

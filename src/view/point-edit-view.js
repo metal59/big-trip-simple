@@ -155,7 +155,7 @@ function createPointEditTemplate(data) {
 export default class PointEditView extends AbstractView {
   #data = null;
 
-  constructor(data) {
+  constructor({ data }) {
     super();
     this.#data = data;
   }
