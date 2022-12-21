@@ -57,13 +57,22 @@ function createPointTemplate(data) {
 
 export default class PointView extends AbstractView {
   #data = null;
+  #handleEditClick = null;
 
-  constructor({ data }) {
+  constructor({ data, onEditClick }) {
     super();
     this.#data = data;
+    this.#handleEditClick = onEditClick;
+
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editClickHandler);
   }
 
   get template() {
     return createPointTemplate(this.#data);
   }
+
+  #editClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleEditClick();
+  };
 }
