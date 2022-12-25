@@ -1,4 +1,4 @@
-import { createElement } from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import { POINT_TYPES } from '../const.js';
 import dayjs from 'dayjs';
 import { capitalizeFirstLetter } from '../utils.js';
@@ -66,7 +66,7 @@ function createPointEditDestinationTemplate(destination) {
   const photosTape = destination.pictures.length === 0 ? '' : `
     <div class="event__photos-container">
       <div class="event__photos-tape">
-        ${destination.pictures.map(({src, description}) => `<img class="event__photo" src="${src}" alt="${description}">`)}
+        ${destination.pictures.map(({ src, description }) => `<img class="event__photo" src="${src}" alt="${description}">`)}
       </div>
     </div>
   `;
@@ -145,34 +145,45 @@ function createPointEditTemplate(data) {
           </button>
           `}
         </header>
-        ${createPointEditOffersDestinationTemplate({point, destination, allOffers, offersByType})}
+        ${createPointEditOffersDestinationTemplate({ point, destination, allOffers, offersByType })}
       </form>
     </li>
     `
   );
 }
 
-export default class PointEditView {
-  #element = null;
+export default class PointEditView extends AbstractView {
   #data = null;
+  #handleFormSubmit = null;
+  #handleDeleteClick = null;
+  #handleCloseClick = null;
 
-  constructor(data) {
+  constructor({ data, onFormSubmit, onDeleteClick, onCloseClick }) {
+    super();
     this.#data = data;
+    this.#handleFormSubmit = onFormSubmit;
+    this.#handleDeleteClick = onDeleteClick;
+    this.#handleCloseClick = onCloseClick;
+
+    this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
+    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#deleteClickHandler);
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeClickHandler);
   }
 
   get template() {
     return createPointEditTemplate(this.#data);
   }
 
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
+  #formSubmitHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleFormSubmit();
+  };
 
-    return this.#element;
-  }
+  #deleteClickHandler = () => {
+    this.#handleDeleteClick();
+  };
 
-  removeElement() {
-    this.#element = null;
-  }
+  #closeClickHandler = () => {
+    this.#handleCloseClick();
+  };
 }
