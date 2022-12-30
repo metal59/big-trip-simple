@@ -30,6 +30,14 @@ export default class BoardPresenter {
     return Object.assign({}, { point }, this.#pointViewCommonData);
   }
 
+  #renderSort() {
+    render(new SortView(), this.#boardContainer);
+  }
+
+  #renderNoPoints() {
+    render(new NoPointView(), this.#boardContainer);
+  }
+
   #renderPoint(point = null) {
     const escKeyDownHandler = (evt) => {
       if (evt.key === 'Escape' || evt.key === 'Esc') {
@@ -76,16 +84,18 @@ export default class BoardPresenter {
     render(pointComponent, this.#tripListComponent.element);
   }
 
+  #renderPointList() {
+    render(this.#tripListComponent, this.#boardContainer);
+    this.#points.forEach((point) => this.#renderPoint(point));
+  }
+
   #renderBoard() {
     if (this.#points.length === 0) {
-      render(new NoPointView(), this.#boardContainer);
+      this.#renderNoPoints();
       return;
     }
 
-    render(new SortView(), this.#boardContainer);
-    render(this.#tripListComponent, this.#boardContainer);
-    for (let i = 0; i < this.#points.length; i++) {
-      this.#renderPoint(this.#points[i]);
-    }
+    this.#renderSort();
+    this.#renderPointList();
   }
 }
