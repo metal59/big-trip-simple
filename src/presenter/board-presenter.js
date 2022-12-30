@@ -1,6 +1,6 @@
 import { render } from '../framework/render.js';
 import SortView from '../view/sort-view.js';
-import TripListView from '../view/trip-list-view.js';
+import PointListView from '../view/point-list-view.js';
 import PointEditView from '../view/point-edit-view.js';
 import PointView from '../view/point-view.js';
 import NoPointView from '../view/no-point-view.js';
@@ -10,7 +10,7 @@ export default class BoardPresenter {
   #points = null;
   #pointViewCommonData = null;
 
-  #tripListComponent = new TripListView();
+  #pointListComponent = new PointListView();
 
   constructor({ boardContainer, pointsModel }) {
     this.#boardContainer = boardContainer;
@@ -74,18 +74,18 @@ export default class BoardPresenter {
     });
 
     function replaceEventToForm() {
-      this.#tripListComponent.element.replaceChild(pointEditComponent.element, pointComponent.element);
+      this.#pointListComponent.element.replaceChild(pointEditComponent.element, pointComponent.element);
     }
 
     function replaceFormToEvent() {
-      this.#tripListComponent.element.replaceChild(pointComponent.element, pointEditComponent.element);
+      this.#pointListComponent.element.replaceChild(pointComponent.element, pointEditComponent.element);
     }
 
-    render(pointComponent, this.#tripListComponent.element);
+    render(pointComponent, this.#pointListComponent.element);
   }
 
   #renderPointList() {
-    render(this.#tripListComponent, this.#boardContainer);
+    render(this.#pointListComponent, this.#boardContainer);
     this.#points.forEach((point) => this.#renderPoint(point));
   }
 
