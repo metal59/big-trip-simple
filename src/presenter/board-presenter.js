@@ -10,6 +10,7 @@ export default class BoardPresenter {
   #pointCommonData = null;
 
   #pointListComponent = new PointListView();
+  #pointPresenter = new Map();
 
   constructor({ boardContainer, pointsModel }) {
     this.#boardContainer = boardContainer;
@@ -43,6 +44,12 @@ export default class BoardPresenter {
     });
     const data = this.#getPointViewData(point);
     pointPresenter.init(data);
+    this.#pointPresenter.set(point.id, pointPresenter);
+  }
+
+  #clearPointList() {
+    this.#pointPresenter.forEach((presenter) => presenter.destroy());
+    this.#pointPresenter.clear();
   }
 
   #renderPointList() {

@@ -1,3 +1,4 @@
+import {nanoid} from 'nanoid';
 import { getRandomArrayElement } from '../utils/common.js';
 
 const mockPoints = [
@@ -7,7 +8,8 @@ const mockPoints = [
     dateTo: new Date('2022-01-02T21:45'),
     destination: 0,
     offers: [1, 2],
-    type: 'taxi'
+    type: 'taxi',
+    id: nanoid(),
   },
   {
     basePrice: 2000,
@@ -15,7 +17,8 @@ const mockPoints = [
     dateTo: new Date('2022-03-03T02:20'),
     destination: 1,
     offers: [1],
-    type: 'bus'
+    type: 'bus',
+    id: nanoid(),
   },
   {
     basePrice: 3000,
@@ -23,7 +26,8 @@ const mockPoints = [
     dateTo: new Date('2022-11-11T17:30'),
     destination: 2,
     offers: [2, 3],
-    type: 'train'
+    type: 'train',
+    id: nanoid(),
   },
   {
     basePrice: 4000,
@@ -31,7 +35,8 @@ const mockPoints = [
     dateTo: new Date('2023-01-11T06:30'),
     destination: 3,
     offers: [3, 4],
-    type: 'ship'
+    type: 'ship',
+    id: nanoid(),
   },
 ];
 
