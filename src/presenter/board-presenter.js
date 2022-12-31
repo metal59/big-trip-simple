@@ -40,6 +40,10 @@ export default class BoardPresenter {
     this.#pointPresenter.get(updatedPoint.point.id).init(updatedPoint);
   };
 
+  #handleModeChange = () => {
+    this.#pointPresenter.forEach((presenter) => presenter.resetView());
+  };
+
   #renderSort() {
     render(new SortView(), this.#boardContainer);
   }
@@ -52,6 +56,7 @@ export default class BoardPresenter {
     const pointPresenter = new PointPresenter({
       pointListContainer: this.#pointListComponent.element,
       onDataChange: this.#handlePointChange,
+      onModeChange: this.#handleModeChange,
     });
     const data = this.#getPointViewData(point);
     pointPresenter.init(data);
