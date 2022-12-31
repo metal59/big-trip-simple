@@ -21,23 +21,24 @@ export default class BoardPresenter {
   }
 
   init() {
-    this.#boardPoints = [...this.#pointsModel.points];
     this.#pointCommonData = {
-      offers: [...this.#pointsModel.offers],
+      allOffers: [...this.#pointsModel.allOffers],
       offersByType: [...this.#pointsModel.offersByType],
-      destinations: [...this.#pointsModel.destinations],
+      allDestinations: [...this.#pointsModel.allDestinations],
     };
+    this.#boardPoints = [...this.#pointsModel.points];
+    this.#boardPoints.forEach((point) => {
+      point.allOffers = this.#pointCommonData.allOffers;
+      point.offersByType = this.#pointCommonData.offersByType;
+      point.allDestinations = this.#pointCommonData.allDestinations;
+    });
 
     this.#renderBoard();
   }
 
-  #getPointViewData(point = null) {
-    return Object.assign({}, { point }, this.#pointCommonData);
-  }
-
   #handlePointChange = (updatedPoint) => {
     this.#boardPoints = updateItem(this.#boardPoints, updatedPoint);
-    this.#pointPresenter.get(updatedPoint.point.id).init(updatedPoint);
+    this.#pointPresenter.get(updatedPoint.id).init(updatedPoint);
   };
 
   #handleModeChange = () => {
@@ -52,14 +53,13 @@ export default class BoardPresenter {
     render(new NoPointView(), this.#boardContainer);
   }
 
-  #renderPoint(point = null) {
+  #renderPoint(point) {
     const pointPresenter = new PointPresenter({
       pointListContainer: this.#pointListComponent.element,
       onDataChange: this.#handlePointChange,
       onModeChange: this.#handleModeChange,
     });
-    const data = this.#getPointViewData(point);
-    pointPresenter.init(data);
+    pointPresenter.init(point);
     this.#pointPresenter.set(point.id, pointPresenter);
   }
 

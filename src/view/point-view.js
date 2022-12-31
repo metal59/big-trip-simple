@@ -1,13 +1,13 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import dayjs from 'dayjs';
 
-function createPointOffersTemplate({ pointOffers, allOffers }) {
-  if (pointOffers.length === 0) {
+function createPointOffersTemplate(point) {
+  if (point.pointOffers.length === 0) {
     return '<span class="event__offer-title">No additional offers</span>';
   }
 
-  return pointOffers.map((pointOfferId) => {
-    const pointOffer = allOffers.find((offer) => offer.id === pointOfferId);
+  return point.pointOffers.map((pointOfferId) => {
+    const pointOffer = point.allOffers.find((offer) => offer.id === pointOfferId);
     return (`<li class="event__offer">
       <span class="event__offer-title">${pointOffer.title}</span>
       &plus;&euro;&nbsp;
@@ -16,12 +16,9 @@ function createPointOffersTemplate({ pointOffers, allOffers }) {
   }).join('');
 }
 
-function createPointTemplate(data) {
-  const point = data.point;
+function createPointTemplate(point) {
   const { basePrice, dateFrom, dateTo, type } = point;
-  const destination = data.destinations.find((dest) => dest.id === point.destination);
-  const pointOffers = point.offers;
-  const allOffers = data.offers;
+  const destination = point.allDestinations.find((dest) => dest.id === point.destination);
 
   return (
     `
@@ -44,7 +41,7 @@ function createPointTemplate(data) {
         </p>
         <h4 class="visually-hidden">Offers:</h4>
         <ul class="event__selected-offers">
-          ${createPointOffersTemplate({ pointOffers, allOffers })}
+          ${createPointOffersTemplate(point)}
         </ul>
         <button class="event__rollup-btn" type="button">
           <span class="visually-hidden">Open event</span>
@@ -56,19 +53,19 @@ function createPointTemplate(data) {
 }
 
 export default class PointView extends AbstractView {
-  #data = null;
+  #point = null;
   #handleEditClick = null;
 
-  constructor({ data, onEditClick }) {
+  constructor({ point, onEditClick }) {
     super();
-    this.#data = data;
+    this.#point = point;
     this.#handleEditClick = onEditClick;
 
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editClickHandler);
   }
 
   get template() {
-    return createPointTemplate(this.#data);
+    return createPointTemplate(this.#point);
   }
 
   #editClickHandler = (evt) => {
