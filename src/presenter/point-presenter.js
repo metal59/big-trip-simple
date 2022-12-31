@@ -4,14 +4,16 @@ import PointEditView from '../view/point-edit-view.js';
 
 export default class PointPresenter {
   #pointListContainer = null;
+  #handleDataChange = null;
 
   #pointComponent = null;
   #pointEditComponent = null;
 
   #data = null;
 
-  constructor({ pointListContainer }) {
+  constructor({ pointListContainer, onDataChange }) {
     this.#pointListContainer = pointListContainer;
+    this.#handleDataChange = onDataChange;
   }
 
   init(data) {
@@ -82,7 +84,8 @@ export default class PointPresenter {
     document.removeEventListener('keydown', this.#escKeyDownHandler);
   }
 
-  #handleFormSubmit = () => {
+  #handleFormSubmit = (data) => {
+    this.#handleDataChange(data);
     this.#closeEditForm();
   };
 

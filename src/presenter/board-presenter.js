@@ -37,7 +37,7 @@ export default class BoardPresenter {
 
   #handlePointChange = (updatedPoint) => {
     this.#boardPoints = updateItem(this.#boardPoints, updatedPoint);
-    this.#pointPresenter.get(updatedPoint.id).init(updatedPoint);
+    this.#pointPresenter.get(updatedPoint.point.id).init(updatedPoint);
   };
 
   #renderSort() {
@@ -51,6 +51,7 @@ export default class BoardPresenter {
   #renderPoint(point = null) {
     const pointPresenter = new PointPresenter({
       pointListContainer: this.#pointListComponent.element,
+      onDataChange: this.#handlePointChange,
     });
     const data = this.#getPointViewData(point);
     pointPresenter.init(data);
