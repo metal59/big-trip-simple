@@ -3,32 +3,42 @@ import SortView from '../view/sort-view.js';
 import PointListView from '../view/point-list-view.js';
 import NoPointView from '../view/no-point-view.js';
 import PointPresenter from './point-presenter.js';
+import { updateItem } from '../utils/common.js';
 
 export default class BoardPresenter {
   #boardContainer = null;
-  #points = null;
-  #pointCommonData = null;
+  #pointsModel = null;
 
   #pointListComponent = new PointListView();
+
+  #boardPoints = [];
+  #pointCommonData = null;
   #pointPresenter = new Map();
 
   constructor({ boardContainer, pointsModel }) {
     this.#boardContainer = boardContainer;
-    this.#points = [...pointsModel.points];
-    this.#pointCommonData = {
-      offers: [...pointsModel.offers],
-      offersByType: [...pointsModel.offersByType],
-      destinations: [...pointsModel.destinations],
-    };
+    this.#pointsModel = pointsModel;
   }
 
   init() {
+    this.#boardPoints = [...this.#pointsModel.points];
+    this.#pointCommonData = {
+      offers: [...this.#pointsModel.offers],
+      offersByType: [...this.#pointsModel.offersByType],
+      destinations: [...this.#pointsModel.destinations],
+    };
+
     this.#renderBoard();
   }
 
   #getPointViewData(point = null) {
     return Object.assign({}, { point }, this.#pointCommonData);
   }
+
+  #handlePointChange = (updatedPoint) => {
+    this.#boardPoints = updateItem(this.#boardPoints, updatedPoint);
+    this.#pointPresenter.get(updatedPoint.id).init(updatedPoint);
+  };
 
   #renderSort() {
     render(new SortView(), this.#boardContainer);
@@ -54,11 +64,11 @@ export default class BoardPresenter {
 
   #renderPointList() {
     render(this.#pointListComponent, this.#boardContainer);
-    this.#points.forEach((point) => this.#renderPoint(point));
+    this.#boardPoints.forEach((point) => this.#renderPoint(point));
   }
 
   #renderBoard() {
-    if (this.#points.length === 0) {
+    if (this.#boardPoints.length === 0) {
       this.#renderNoPoints();
       return;
     }
