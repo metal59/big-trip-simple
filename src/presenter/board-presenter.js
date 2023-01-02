@@ -17,6 +17,7 @@ export default class BoardPresenter {
   #boardPoints = [];
   #pointCommonData = null;
   #pointPresenter = new Map();
+  #currentSortType = SortType.DAY;
 
   constructor({ boardContainer, pointsModel }) {
     this.#boardContainer = boardContainer;
@@ -48,7 +49,7 @@ export default class BoardPresenter {
     this.#pointPresenter.forEach((presenter) => presenter.resetView());
   };
 
-  #sortTasks(sortType) {
+  #sortPoints(sortType) {
     switch (sortType) {
       case SortType.DAY:
         this.#boardPoints.sort(sortDate);
@@ -57,12 +58,14 @@ export default class BoardPresenter {
         this.#boardPoints.sort(sortPrice);
         break;
     }
+
+    this.#currentSortType = sortType;
   }
 
   #handleSortTypeChange = (sortType) => {
-    this.#sortTasks(sortType);
-    // - Очищаем список
-    // - Рендерим список заново
+    this.#sortPoints(sortType);
+    this.#clearPointList();
+    this.#renderPointList();
   };
 
   #renderSort() {
@@ -103,6 +106,7 @@ export default class BoardPresenter {
       return;
     }
 
+    this.#sortPoints(this.#currentSortType);
     this.#renderSort();
     this.#renderPointList();
   }
