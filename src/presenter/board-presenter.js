@@ -4,6 +4,8 @@ import PointListView from '../view/point-list-view.js';
 import NoPointView from '../view/no-point-view.js';
 import PointPresenter from './point-presenter.js';
 import { updateItem } from '../utils/common.js';
+import { sortDate, sortPrice } from '../utils/point.js';
+import { SortType } from '../const.js';
 
 export default class BoardPresenter {
   #boardContainer = null;
@@ -46,8 +48,19 @@ export default class BoardPresenter {
     this.#pointPresenter.forEach((presenter) => presenter.resetView());
   };
 
+  #sortTasks(sortType) {
+    switch (sortType) {
+      case SortType.DAY:
+        this.#boardPoints.sort(sortDate);
+        break;
+      case SortType.PRICE:
+        this.#boardPoints.sort(sortPrice);
+        break;
+    }
+  }
+
   #handleSortTypeChange = (sortType) => {
-    // - Сортируем задачи
+    this.#sortTasks(sortType);
     // - Очищаем список
     // - Рендерим список заново
   };
