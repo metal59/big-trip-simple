@@ -5,23 +5,23 @@ import { getDestinations } from '../mock/destination.js';
 
 export default class PointsModel {
   #points = [...getPoints()];
-  #offers = getOffers();
+  #allOffers = getOffers();
   #offersByType = getOffersByType();
-  #destinations = getDestinations();
+  #allDestinations = getDestinations();
 
   get points() {
     return this.#points;
   }
 
-  get offers() {
-    return this.#offers;
+  get allOffers() {
+    return this.#allOffers;
   }
 
   get offersByType() {
     return this.#offersByType;
   }
 
-  get destinations() {
-    return this.#destinations;
+  get allDestinations() {
+    return this.#allDestinations;
   }
 }

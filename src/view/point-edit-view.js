@@ -21,24 +21,24 @@ function createPointEditEventTypeItemsTemplate() {
     .join('');
 }
 
-function createPointEditOffersDestinationTemplate({ point, destination, allOffers, offersByType }) {
-  if (point.offers.length === 0 && destination.name === '') {
+function createPointEditOffersDestinationTemplate({ point, destination }) {
+  if (point.pointOffers.length === 0 && destination.name === '') {
     return '';
   }
   return (`
     <section class="event__details">
-    ${(point.offers.length > 0) ? `${createPointEditOffersTemplate({ point, allOffers, offersByType })}` : ''}
+    ${(point.pointOffers.length > 0) ? `${createPointEditOffersTemplate(point)}` : ''}
     ${(destination.name !== '') ? `${createPointEditDestinationTemplate(destination)}` : ''}
     </section>
 `);
 }
 
-function createPointEditOffersTemplate({ point, allOffers, offersByType }) {
-  const pointAvaliableOfferIds = offersByType.find((o) => o.type === point.type).offers;
+function createPointEditOffersTemplate(point) {
+  const pointAvaliableOfferIds = point.offersByType.find((o) => o.type === point.type).offers;
 
   const offersMarkup = pointAvaliableOfferIds.map((pointAvaliableOfferId, i) => {
-    const offer = allOffers.find((o) => o.id === pointAvaliableOfferId);
-    const checked = point.offers.includes(offer.id) ? 'checked' : '';
+    const offer = point.allOffers.find((o) => o.id === pointAvaliableOfferId);
+    const checked = point.pointOffers.includes(offer.id) ? 'checked' : '';
     const eventInputName = `event-offer-${offer.title.toLowerCase().replaceAll(' ', '-')}`;
     return `
       <div class="event__offer-selector">
@@ -79,13 +79,13 @@ function createPointEditDestinationTemplate(destination) {
   `);
 }
 
-function createPointEditTemplate(data) {
-  const isNewPoint = data.point === null;
-  const point = isNewPoint ? BLANK_POINT : data.point;
+function createPointEditTemplate(point) {
+  const isNewPoint = !('id' in point);
+  if (isNewPoint) {
+    point = { ...point, ...BLANK_POINT };
+  }
   const { basePrice, dateFrom, dateTo, type } = point;
-  const destination = isNewPoint ? { name: '' } : data.destinations.find((dest) => dest.id === point.destination);
-  const allOffers = data.offers;
-  const offersByType = data.offersByType;
+  const destination = isNewPoint ? { name: '' } : point.allDestinations.find((dest) => dest.id === point.destination);
 
   return (
     `
@@ -145,7 +145,7 @@ function createPointEditTemplate(data) {
           </button>
           `}
         </header>
-        ${createPointEditOffersDestinationTemplate({ point, destination, allOffers, offersByType })}
+        ${createPointEditOffersDestinationTemplate({ point, destination })}
       </form>
     </li>
     `
@@ -153,14 +153,14 @@ function createPointEditTemplate(data) {
 }
 
 export default class PointEditView extends AbstractView {
-  #data = null;
+  #point = null;
   #handleFormSubmit = null;
   #handleDeleteClick = null;
   #handleCloseClick = null;
 
-  constructor({ data, onFormSubmit, onDeleteClick, onCloseClick }) {
+  constructor({ point, onFormSubmit, onDeleteClick, onCloseClick }) {
     super();
-    this.#data = data;
+    this.#point = point;
     this.#handleFormSubmit = onFormSubmit;
     this.#handleDeleteClick = onDeleteClick;
     this.#handleCloseClick = onCloseClick;
@@ -171,12 +171,12 @@ export default class PointEditView extends AbstractView {
   }
 
   get template() {
-    return createPointEditTemplate(this.#data);
+    return createPointEditTemplate(this.#point);
   }
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    this.#handleFormSubmit();
+    this.#handleFormSubmit(this.#point);
   };
 
   #deleteClickHandler = () => {
