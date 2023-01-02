@@ -10,6 +10,7 @@ export default class BoardPresenter {
   #pointsModel = null;
 
   #pointListComponent = new PointListView();
+  #sortComponent = null;
 
   #boardPoints = [];
   #pointCommonData = null;
@@ -45,8 +46,18 @@ export default class BoardPresenter {
     this.#pointPresenter.forEach((presenter) => presenter.resetView());
   };
 
+  #handleSortTypeChange = (sortType) => {
+    // - Сортируем задачи
+    // - Очищаем список
+    // - Рендерим список заново
+  };
+
   #renderSort() {
-    render(new SortView(), this.#boardContainer);
+    this.#sortComponent = new SortView({
+      onSortTypeChange: this.#handleSortTypeChange
+    });
+
+    render(this.#sortComponent, this.#boardContainer);
   }
 
   #renderNoPoints() {
