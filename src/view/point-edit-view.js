@@ -170,6 +170,12 @@ export default class PointEditView extends AbstractStatefulView {
     return createPointEditTemplate(this._state);
   }
 
+  reset(point) {
+    this.updateElement(
+      PointEditView.parsePointToState(point),
+    );
+  }
+
   _restoreHandlers() {
     this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
     this.element.querySelector('.event__reset-btn').addEventListener('click', this.#deleteClickHandler);
