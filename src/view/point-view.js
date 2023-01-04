@@ -1,17 +1,17 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import dayjs from 'dayjs';
 
-function createPointOffersTemplate(point) {
-  if (point.pointOffers.length === 0) {
+function createSelectedOffersTemplate(point) {
+  if (point.selectedOffers.length === 0) {
     return '<span class="event__offer-title">No additional offers</span>';
   }
 
-  return point.pointOffers.map((pointOfferId) => {
-    const pointOffer = point.allOffers.find((offer) => offer.id === pointOfferId);
+  return point.selectedOffers.map((selectedOfferId) => {
+    const selectedOffer = point.allOffers.find((offer) => offer.id === selectedOfferId);
     return (`<li class="event__offer">
-      <span class="event__offer-title">${pointOffer.title}</span>
+      <span class="event__offer-title">${selectedOffer.title}</span>
       &plus;&euro;&nbsp;
-      <span class="event__offer-price">${pointOffer.price}</span>
+      <span class="event__offer-price">${selectedOffer.price}</span>
     </li>`);
   }).join('');
 }
@@ -41,7 +41,7 @@ function createPointTemplate(point) {
         </p>
         <h4 class="visually-hidden">Offers:</h4>
         <ul class="event__selected-offers">
-          ${createPointOffersTemplate(point)}
+          ${createSelectedOffersTemplate(point)}
         </ul>
         <button class="event__rollup-btn" type="button">
           <span class="visually-hidden">Open event</span>
