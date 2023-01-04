@@ -200,8 +200,7 @@ export default class PointEditView extends AbstractStatefulView {
     evt.preventDefault();
     const parsedPrice = parseInt(evt.target.value, 10);
     evt.target.value = isNaN(parsedPrice) ? this._state.basePrice : parsedPrice;
-    this._state.basePrice = parseInt(evt.target.value, 10);
-    this._state.totalPrice = calculateTotalPrice(this._state);
+    this.updateElement({ basePrice: parseInt(evt.target.value, 10) });
   };
 
   #offerChangeHandler = (evt) => {
@@ -213,10 +212,7 @@ export default class PointEditView extends AbstractStatefulView {
     } else {
       selectedOffers = this._state.selectedOffers.filter((e) => e !== offerId);
     }
-
-    this._state.selectedOffers = selectedOffers;
-    this._state.totalPrice = calculateTotalPrice(this._state);
-    this.updateElement();
+    this.updateElement({ selectedOffers });
   };
 
   #formSubmitHandler = (evt) => {
@@ -237,6 +233,9 @@ export default class PointEditView extends AbstractStatefulView {
   }
 
   static parseStateToPoint(state) {
-    return { ...state };
+    return {
+      ...state,
+      totalPrice: calculateTotalPrice(state),
+    };
   }
 }

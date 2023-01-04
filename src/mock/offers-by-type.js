@@ -25,7 +25,7 @@ const mockOffersByType = [
   },
   {
     type: 'check-in',
-    offers: [0, 3]
+    offers: []
   },
   {
     type: 'sightseeing',
