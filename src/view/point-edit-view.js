@@ -186,6 +186,7 @@ export default class PointEditView extends AbstractStatefulView {
     if (pointAvaliableOfferIds(this._state).length > 0) {
       this.element.querySelector('.event__available-offers').addEventListener('change', this.#offerChangeHandler);
     }
+    this.element.querySelector('.event__input--destination').addEventListener('change', this.#destinationChangeHandler);
   }
 
   #pointTypeChangeHandler = (evt) => {
@@ -213,6 +214,16 @@ export default class PointEditView extends AbstractStatefulView {
       selectedOffers = this._state.selectedOffers.filter((e) => e !== offerId);
     }
     this.updateElement({ selectedOffers });
+  };
+
+  #destinationChangeHandler = (evt) => {
+    const point = this._state;
+    const destination = point.allDestinations.find((dest) => dest.name === evt.target.value);
+    if (destination === undefined) {
+      this.reset(this._state);
+    } else {
+      this.updateElement({ destination: destination.id });
+    }
   };
 
   #formSubmitHandler = (evt) => {
