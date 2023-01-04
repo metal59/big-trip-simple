@@ -164,13 +164,17 @@ export default class PointEditView extends AbstractStatefulView {
     this.#handleDeleteClick = onDeleteClick;
     this.#handleCloseClick = onCloseClick;
 
-    this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
-    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#deleteClickHandler);
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeClickHandler);
+    this._restoreHandlers();
   }
 
   get template() {
     return createPointEditTemplate(this._state);
+  }
+
+  _restoreHandlers() {
+    this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
+    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#deleteClickHandler);
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeClickHandler);
   }
 
   #formSubmitHandler = (evt) => {
