@@ -6,6 +6,7 @@ import PointPresenter from './point-presenter.js';
 import { updateItem } from '../utils/common.js';
 import { sortDate, sortPrice } from '../utils/point.js';
 import { SortType } from '../const.js';
+import { calculateTotalPrice } from '../utils/point.js';
 
 export default class BoardPresenter {
   #boardContainer = null;
@@ -35,6 +36,7 @@ export default class BoardPresenter {
       point.allOffers = this.#pointCommonData.allOffers;
       point.offersByType = this.#pointCommonData.offersByType;
       point.allDestinations = this.#pointCommonData.allDestinations;
+      point.totalPrice = calculateTotalPrice(point);
     });
 
     this.#renderBoard();

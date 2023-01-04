@@ -2,6 +2,8 @@ import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { POINT_TYPES } from '../const.js';
 import dayjs from 'dayjs';
 import { capitalizeFirstLetter } from '../utils/common.js';
+import { pointAvaliableOfferIds } from '../utils/point.js';
+import { calculateTotalPrice } from '../utils/point.js';
 
 const BLANK_POINT = {
   basePrice: null,
@@ -22,21 +24,20 @@ function createPointEditEventTypeItemsTemplate() {
 }
 
 function createPointEditOffersDestinationTemplate(point, destination) {
-  if (point.selectedOffers.length === 0 && destination.name === '') {
+  const avaliableOfferIds = pointAvaliableOfferIds(point);
+  if (avaliableOfferIds.length === 0 && destination.name === '') {
     return '';
   }
   return (`
     <section class="event__details">
-    ${(point.selectedOffers.length > 0) ? `${createPointEditOffersTemplate(point)}` : ''}
+    ${(avaliableOfferIds.length > 0) ? `${createPointEditOffersTemplate(point)}` : ''}
     ${(destination.name !== '') ? `${createPointEditDestinationTemplate(destination)}` : ''}
     </section>
 `);
 }
 
 function createPointEditOffersTemplate(point) {
-  const pointAvaliableOfferIds = point.offersByType.find((o) => o.type === point.type).offers;
-
-  const offersMarkup = pointAvaliableOfferIds.map((pointAvaliableOfferId, i) => {
+  const offersMarkup = pointAvaliableOfferIds(point).map((pointAvaliableOfferId, i) => {
     const offer = point.allOffers.find((o) => o.id === pointAvaliableOfferId);
     const checked = point.selectedOffers.includes(offer.id) ? 'checked' : '';
     const eventInputName = `event-offer-${offer.title.toLowerCase().replaceAll(' ', '-')}`;
@@ -181,13 +182,32 @@ export default class PointEditView extends AbstractStatefulView {
     this.element.querySelector('.event__reset-btn').addEventListener('click', this.#deleteClickHandler);
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeClickHandler);
     this.element.querySelector('.event__input--price').addEventListener('input', this.#priceInputHandler);
+    if (pointAvaliableOfferIds(this._state).length > 0) {
+      this.element.querySelector('.event__available-offers').addEventListener('change', this.#offerChangeHandler);
+    }
   }
 
   #priceInputHandler = (evt) => {
     evt.preventDefault();
     const parsedPrice = parseInt(evt.target.value, 10);
     evt.target.value = isNaN(parsedPrice) ? this._state.basePrice : parsedPrice;
-    this._setState({ basePrice: evt.target.value });
+    this._state.basePrice = parseInt(evt.target.value, 10);
+    this._state.totalPrice = calculateTotalPrice(this._state);
+  };
+
+  #offerChangeHandler = (evt) => {
+    let selectedOffers = this._state.selectedOffers;
+    const offerId = parseInt(evt.target.dataset.offerId, 10);
+    if (evt.target.checked) {
+      selectedOffers.push(offerId);
+      selectedOffers.sort();
+    } else {
+      selectedOffers = this._state.selectedOffers.filter((e) => e !== offerId);
+    }
+
+    this._state.selectedOffers = selectedOffers;
+    this._state.totalPrice = calculateTotalPrice(this._state);
+    this.updateElement();
   };
 
   #formSubmitHandler = (evt) => {

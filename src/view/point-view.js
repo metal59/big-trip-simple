@@ -17,7 +17,7 @@ function createSelectedOffersTemplate(point) {
 }
 
 function createPointTemplate(point) {
-  const { basePrice, dateFrom, dateTo, type } = point;
+  const { totalPrice, dateFrom, dateTo, type } = point;
   const destination = point.allDestinations.find((dest) => dest.id === point.destination);
 
   return (
@@ -37,7 +37,7 @@ function createPointTemplate(point) {
           </p>
         </div>
         <p class="event__price">
-          &euro;&nbsp;<span class="event__price-value">${basePrice}</span>
+          &euro;&nbsp;<span class="event__price-value">${totalPrice}</span>
         </p>
         <h4 class="visually-hidden">Offers:</h4>
         <ul class="event__selected-offers">
