@@ -18,53 +18,42 @@ const BLANK_POINT = {
   id: null,
 };
 
-function createPointEditEventTypeItemsTemplate() {
-  return POINT_TYPES.map((pointType, i) => `
+const createPointEditEventTypeItemsTemplate = () => POINT_TYPES.map((pointType, i) => `
     <div class="event__type-item">
       <input id="event-type-${i}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${pointType}">
       <label class="event__type-label  event__type-label--${pointType}" for="event-type-${i}">${capitalizeFirstLetter(pointType)}</label>
     </div>
     `)
-    .join('');
-}
+  .join('');
 
-function createPointEditOffersDestinationTemplate(point) {
-  return (`
-    <section class="event__details">
-    ${(pointAvaliableOfferIds(point).length > 0) ? `${createPointEditOffersTemplate(point)}` : ''}
-    ${(point.destId !== -1) ? `${createPointEditDestinationTemplate(point)}` : ''}
-    </section>
-`);
-}
-
-function createPointEditOffersTemplate(point) {
+const createPointEditOffersTemplate = (point) => {
   const offersMarkup = pointAvaliableOfferIds(point).map((pointAvaliableOfferId, i) => {
     const offer = point.allOffers.find((o) => o.id === pointAvaliableOfferId);
     const checked = point.selectedOffers.includes(offer.id) ? 'checked' : '';
     const eventInputName = `event-offer-${offer.title.toLowerCase().replaceAll(' ', '-')}`;
     return `
-      <div class="event__offer-selector">
-        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${i}" type="checkbox" name="${eventInputName}" data-offer-id="${offer.id}" ${checked}>
-        <label class="event__offer-label" for="event-offer-${i}">
-          <span class="event__offer-title">${offer.title}</span>
-          &plus;&euro;&nbsp;
-          <span class="event__offer-price">${offer.price}</span>
-        </label>
-      </div>`;
+        <div class="event__offer-selector">
+          <input class="event__offer-checkbox  visually-hidden" id="event-offer-${i}" type="checkbox" name="${eventInputName}" data-offer-id="${offer.id}" ${checked}>
+          <label class="event__offer-label" for="event-offer-${i}">
+            <span class="event__offer-title">${offer.title}</span>
+            &plus;&euro;&nbsp;
+            <span class="event__offer-price">${offer.price}</span>
+          </label>
+        </div>`;
   }).join('');
 
   return (`
-    <section class="event__section  event__section--offers">
-      <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+      <section class="event__section  event__section--offers">
+        <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
-      <div class="event__available-offers">
-        ${offersMarkup}
-      </div>
-    </section>
-  `);
-}
+        <div class="event__available-offers">
+          ${offersMarkup}
+        </div>
+      </section>
+    `);
+};
 
-function createPointEditDestinationTemplate(point) {
+const createPointEditDestinationTemplate = (point) => {
   const destination = point.allDestinations.find((dest) => dest.id === point.destId);
   const photosTape = destination.pictures.length === 0 ? '' : `
     <div class="event__photos-container">
@@ -80,9 +69,16 @@ function createPointEditDestinationTemplate(point) {
       ${photosTape}
     </section>
   `);
-}
+};
 
-function createPointEditTemplate(point) {
+const createPointEditOffersDestinationTemplate = (point) => (`
+    <section class="event__details">
+    ${(pointAvaliableOfferIds(point).length > 0) ? `${createPointEditOffersTemplate(point)}` : ''}
+    ${(point.destId !== -1) ? `${createPointEditDestinationTemplate(point)}` : ''}
+    </section>
+`);
+
+const createPointEditTemplate = (point) => {
   const isNewPoint = (point.id === null);
   if (isNewPoint) {
     point = { ...point, ...BLANK_POINT };
@@ -162,7 +158,7 @@ function createPointEditTemplate(point) {
     </li>
     `
   );
-}
+};
 
 export default class PointEditView extends AbstractStatefulView {
   #handleFormSubmit = null;

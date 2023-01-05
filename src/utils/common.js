@@ -7,8 +7,6 @@ const capitalizeFirstLetter = (string) => string.charAt(0)
 
 const isFuturePoint = (dateFrom) => dateFrom && (dayjs().isSame(dateFrom, 'D') || dayjs().isBefore(dateFrom, 'D'));
 
-function updateItem(items, update) {
-  return items.map((item) => item.id === update.id ? update : item);
-}
+const updateItem = (items, update) => items.map((item) => item.id === update.id ? update : item);
 
 export { getRandomArrayElement, capitalizeFirstLetter, isFuturePoint, updateItem };

@@ -1,7 +1,7 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import dayjs from 'dayjs';
 
-function createSelectedOffersTemplate(point) {
+const createSelectedOffersTemplate = (point) => {
   if (point.selectedOffers.length === 0) {
     return '<span class="event__offer-title">No additional offers</span>';
   }
@@ -14,9 +14,9 @@ function createSelectedOffersTemplate(point) {
       <span class="event__offer-price">${selectedOffer.price}</span>
     </li>`);
   }).join('');
-}
+};
 
-function createPointTemplate(point) {
+const createPointTemplate = (point) => {
   const { totalPrice, dateFrom, dateTo, type } = point;
   const destination = point.allDestinations.find((dest) => dest.id === point.destId);
 
@@ -50,7 +50,7 @@ function createPointTemplate(point) {
     </li>
     `
   );
-}
+};
 
 export default class PointView extends AbstractView {
   #point = null;
