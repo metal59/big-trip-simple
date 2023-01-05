@@ -9,11 +9,13 @@ import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 
 const BLANK_POINT = {
-  basePrice: null,
-  dateFrom: new Date('2022-01-01T00:00'),
-  dateTo: new Date('2022-01-01T00:00'),
-  offers: [],
+  basePrice: 0,
+  dateFrom: new Date(),
+  dateTo: new Date(),
+  destId: -1,
+  selectedOffers: [],
   type: POINT_TYPES[0],
+  id: null,
 };
 
 function createPointEditEventTypeItemsTemplate() {
@@ -26,15 +28,11 @@ function createPointEditEventTypeItemsTemplate() {
     .join('');
 }
 
-function createPointEditOffersDestinationTemplate(point, destination) {
-  const avaliableOfferIds = pointAvaliableOfferIds(point);
-  if (avaliableOfferIds.length === 0 && destination.name === '') {
-    return '';
-  }
+function createPointEditOffersDestinationTemplate(point) {
   return (`
     <section class="event__details">
-    ${(avaliableOfferIds.length > 0) ? `${createPointEditOffersTemplate(point)}` : ''}
-    ${(destination.name !== '') ? `${createPointEditDestinationTemplate(destination)}` : ''}
+    ${(pointAvaliableOfferIds(point).length > 0) ? `${createPointEditOffersTemplate(point)}` : ''}
+    ${(point.destId !== -1) ? `${createPointEditDestinationTemplate(point)}` : ''}
     </section>
 `);
 }
@@ -66,7 +64,8 @@ function createPointEditOffersTemplate(point) {
   `);
 }
 
-function createPointEditDestinationTemplate(destination) {
+function createPointEditDestinationTemplate(point) {
+  const destination = point.allDestinations.find((dest) => dest.id === point.destId);
   const photosTape = destination.pictures.length === 0 ? '' : `
     <div class="event__photos-container">
       <div class="event__photos-tape">
@@ -84,13 +83,23 @@ function createPointEditDestinationTemplate(destination) {
 }
 
 function createPointEditTemplate(point) {
-  const isNewPoint = !('id' in point);
+  const isNewPoint = (point.id === null);
   if (isNewPoint) {
     point = { ...point, ...BLANK_POINT };
   }
   const { basePrice, dateFrom, dateTo, type } = point;
-  const destination = isNewPoint ? { name: '' } : point.allDestinations.find((dest) => dest.id === point.destId);
   const destinationDataList = point.allDestinations.map((dest) => `<option value="${dest.name}">`).join('');
+
+  let destName = '';
+  let isSubmitDisabled = true;
+  if (point.destId !== -1) {
+    destName = point.allDestinations.find((dest) => dest.id === point.destId).name;
+    isSubmitDisabled = false;
+  }
+
+  const pointEditOffersDestinationTemplate =
+    (pointAvaliableOfferIds(point).length === 0 && point.destId === -1) ? '' :
+      createPointEditOffersDestinationTemplate(point);
 
   return (
     `
@@ -116,7 +125,7 @@ function createPointEditTemplate(point) {
             <label class="event__label  event__type-output" for="event-destination-${point.id}">
               ${type}
             </label>
-            <input class="event__input  event__input--destination" id="event-destination-${point.id}" type="text" name="event-destination" value="${destination.name}" list="destination-list-${point.id}">
+            <input class="event__input  event__input--destination" id="event-destination-${point.id}" type="text" name="event-destination" value="${destName}" list="destination-list-${point.id}">
             <datalist id="destination-list-${point.id}">
               ${destinationDataList}
             </datalist>
@@ -138,7 +147,7 @@ function createPointEditTemplate(point) {
             <input class="event__input  event__input--price" id="event-price-${point.id}" type="text" name="event-price" value="${basePrice !== null ? basePrice : ''}">
           </div>
 
-          <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
+          <button class="event__save-btn  btn  btn--blue" type="submit" ${isSubmitDisabled ? 'disabled' : ''}>Save</button>
           ${isNewPoint ? `
           <button class="event__reset-btn" type="reset">Cancel</button>
           ` : `
@@ -148,7 +157,7 @@ function createPointEditTemplate(point) {
           </button>
           `}
         </header>
-        ${createPointEditOffersDestinationTemplate(point, destination)}
+        ${pointEditOffersDestinationTemplate}
       </form>
     </li>
     `
@@ -234,13 +243,9 @@ export default class PointEditView extends AbstractStatefulView {
   };
 
   #destinationChangeHandler = (evt) => {
-    const point = this._state;
-    const destination = point.allDestinations.find((dest) => dest.name === evt.target.value);
-    if (destination === undefined) {
-      this.reset(this._state);
-    } else {
-      this.updateElement({ destination: destination.id });
-    }
+    const destination = this._state.allDestinations.find((dest) => dest.name === evt.target.value);
+    const destId = destination === undefined ? -1 : destination.id;
+    this.updateElement({ destId });
   };
 
   #dateFromChangeHandler = ([userDate]) => {
