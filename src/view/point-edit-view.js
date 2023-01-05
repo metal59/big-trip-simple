@@ -89,7 +89,7 @@ function createPointEditTemplate(point) {
     point = { ...point, ...BLANK_POINT };
   }
   const { basePrice, dateFrom, dateTo, type } = point;
-  const destination = isNewPoint ? { name: '' } : point.allDestinations.find((dest) => dest.id === point.destination);
+  const destination = isNewPoint ? { name: '' } : point.allDestinations.find((dest) => dest.id === point.destId);
   const destinationDataList = point.allDestinations.map((dest) => `<option value="${dest.name}">`).join('');
 
   return (
