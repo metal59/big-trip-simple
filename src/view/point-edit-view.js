@@ -4,6 +4,9 @@ import dayjs from 'dayjs';
 import { capitalizeFirstLetter } from '../utils/common.js';
 import { pointAvaliableOfferIds } from '../utils/point.js';
 import { calculateTotalPrice } from '../utils/point.js';
+import flatpickr from 'flatpickr';
+
+import 'flatpickr/dist/flatpickr.min.css';
 
 const BLANK_POINT = {
   basePrice: null,
@@ -120,11 +123,11 @@ function createPointEditTemplate(point) {
           </div>
 
           <div class="event__field-group  event__field-group--time">
-            <label class="visually-hidden" for="event-start-time-${point.id}">From</label>
-            <input class="event__input  event__input--time" id="event-start-time-${point.id}" type="text" name="event-start-time" value="${dayjs(dateFrom).format('DD/MM/YY HH:mm')}">
+            <label class="visually-hidden" for="event-start-time">From</label>
+            <input class="event__input  event__input--time" id="event-start-time" type="text" name="event-start-time" value="${dayjs(dateFrom).format('DD/MM/YY HH:mm')}">
             &mdash;
-            <label class="visually-hidden" for="event-end-time-${point.id}">To</label>
-            <input class="event__input  event__input--time" id="event-end-time-${point.id}" type="text" name="event-end-time" value="${dayjs(dateTo).format('DD/MM/YY HH:mm')}">
+            <label class="visually-hidden" for="event-end-time">To</label>
+            <input class="event__input  event__input--time" id="event-end-time" type="text" name="event-end-time" value="${dayjs(dateTo).format('DD/MM/YY HH:mm')}">
           </div>
 
           <div class="event__field-group  event__field-group--price">
@@ -156,6 +159,7 @@ export default class PointEditView extends AbstractStatefulView {
   #handleFormSubmit = null;
   #handleDeleteClick = null;
   #handleCloseClick = null;
+  #datepicker = { from: null, to: null };
 
   constructor({ point, onFormSubmit, onDeleteClick, onCloseClick }) {
     super();
@@ -169,6 +173,17 @@ export default class PointEditView extends AbstractStatefulView {
 
   get template() {
     return createPointEditTemplate(this._state);
+  }
+
+  removeElement() {
+    super.removeElement();
+
+    for (const key in this.#datepicker) {
+      if (this.#datepicker[key]) {
+        this.#datepicker[key].destroy();
+        this.#datepicker[key] = null;
+      }
+    }
   }
 
   reset(point) {
@@ -187,6 +202,8 @@ export default class PointEditView extends AbstractStatefulView {
       this.element.querySelector('.event__available-offers').addEventListener('change', this.#offerChangeHandler);
     }
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#destinationChangeHandler);
+
+    this.#setDatepicker();
   }
 
   #pointTypeChangeHandler = (evt) => {
@@ -225,6 +242,44 @@ export default class PointEditView extends AbstractStatefulView {
       this.updateElement({ destination: destination.id });
     }
   };
+
+  #dateFromChangeHandler = ([userDate]) => {
+    this.updateElement({
+      dateFrom: userDate,
+    });
+  };
+
+  #dateToChangeHandler = ([userDate]) => {
+    this.updateElement({
+      dateTo: userDate,
+    });
+  };
+
+  #setDatepicker() {
+    this.#datepicker.from = flatpickr(
+      this.element.querySelector('#event-start-time'),
+      {
+        dateFormat: 'd/m/y H:i',
+        enableTime: true,
+        // eslint-disable-next-line camelcase
+        time_24hr: true,
+        defaultDate: this._state.dateFrom,
+        onChange: this.#dateFromChangeHandler,
+      },
+    );
+    this.#datepicker.to = flatpickr(
+      this.element.querySelector('#event-end-time'),
+      {
+        dateFormat: 'd/m/y H:i',
+        enableTime: true,
+        // eslint-disable-next-line camelcase
+        time_24hr: true,
+        defaultDate: this._state.dateTo,
+        minDate: this._state.dateFrom,
+        onChange: this.#dateToChangeHandler,
+      },
+    );
+  }
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
