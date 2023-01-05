@@ -221,9 +221,10 @@ export default class PointEditView extends AbstractStatefulView {
 
   #priceInputHandler = (evt) => {
     evt.preventDefault();
+    if (evt.target.value === '') { evt.target.value = '0'; }
     const parsedPrice = parseInt(evt.target.value, 10);
     evt.target.value = isNaN(parsedPrice) ? this._state.basePrice : parsedPrice;
-    this.updateElement({ basePrice: parseInt(evt.target.value, 10) });
+    this._state.basePrice = parseInt(evt.target.value, 10);
   };
 
   #offerChangeHandler = (evt) => {
