@@ -28,4 +28,17 @@ function sortPrice(pointA, pointB) {
   return weight ?? pointB.basePrice - pointA.basePrice;
 }
 
-export { sortDate, sortPrice };
+function pointAvaliableOfferIds(point) {
+  return point.offersByType.find((o) => o.type === point.type).offers;
+}
+
+function calculateTotalPrice(point) {
+  let price = point.basePrice;
+  point.selectedOffers.map((selectedOfferId) => {
+    const offer = point.allOffers.find((o) => o.id === selectedOfferId);
+    price += offer.price;
+  });
+  return price;
+}
+
+export { sortDate, sortPrice, pointAvaliableOfferIds, calculateTotalPrice };
