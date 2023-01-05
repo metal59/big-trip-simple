@@ -213,9 +213,10 @@ export default class PointEditView extends AbstractStatefulView {
 
   #pointTypeChangeHandler = (evt) => {
     evt.preventDefault();
+    const selectedOffers = this._state.type === evt.target.value ? this._state.selectedOffers : [];
     this.updateElement({
       type: evt.target.value,
-      selectedOffers: [],
+      selectedOffers,
     });
   };
 
