@@ -10,6 +10,7 @@ import { SortType } from '../const.js';
 export default class BoardPresenter {
   #boardContainer = null;
   #pointsModel = null;
+  #pointCommonModel = null;
 
   #pointListComponent = new PointListView();
   #sortComponent = null;
@@ -19,18 +20,15 @@ export default class BoardPresenter {
   #pointPresenter = new Map();
   #currentSortType = SortType.DAY;
 
-  constructor({ boardContainer, pointsModel }) {
+  constructor({ boardContainer, pointsModel, pointCommonModel }) {
     this.#boardContainer = boardContainer;
     this.#pointsModel = pointsModel;
+    this.#pointCommonModel = pointCommonModel;
   }
 
   init() {
     this.#boardPoints = this.#pointsModel.points;
-    this.#pointCommon = {
-      allOffers: this.#pointsModel.allOffers,
-      offersByType: this.#pointsModel.offersByType,
-      allDestinations: this.#pointsModel.allDestinations,
-    };
+    this.#pointCommon = this.#pointCommonModel.pointCommon;
 
     this.#renderBoard();
   }
