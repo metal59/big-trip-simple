@@ -6,7 +6,6 @@ import PointPresenter from './point-presenter.js';
 import { updateItem } from '../utils/common.js';
 import { sortDate, sortPrice } from '../utils/point.js';
 import { SortType } from '../const.js';
-import { calculateTotalPrice } from '../utils/point.js';
 
 export default class BoardPresenter {
   #boardContainer = null;
@@ -16,7 +15,7 @@ export default class BoardPresenter {
   #sortComponent = null;
 
   #boardPoints = [];
-  #pointCommonData = null;
+  #pointCommon = null;
   #pointPresenter = new Map();
   #currentSortType = SortType.DAY;
 
@@ -26,25 +25,19 @@ export default class BoardPresenter {
   }
 
   init() {
-    this.#pointCommonData = {
-      allOffers: [...this.#pointsModel.allOffers],
-      offersByType: [...this.#pointsModel.offersByType],
-      allDestinations: [...this.#pointsModel.allDestinations],
+    this.#boardPoints = this.#pointsModel.points;
+    this.#pointCommon = {
+      allOffers: this.#pointsModel.allOffers,
+      offersByType: this.#pointsModel.offersByType,
+      allDestinations: this.#pointsModel.allDestinations,
     };
-    this.#boardPoints = [...this.#pointsModel.points];
-    this.#boardPoints.forEach((point) => {
-      point.allOffers = this.#pointCommonData.allOffers;
-      point.offersByType = this.#pointCommonData.offersByType;
-      point.allDestinations = this.#pointCommonData.allDestinations;
-      point.totalPrice = calculateTotalPrice(point);
-    });
 
     this.#renderBoard();
   }
 
   #handlePointChange = (updatedPoint) => {
     this.#boardPoints = updateItem(this.#boardPoints, updatedPoint);
-    this.#pointPresenter.get(updatedPoint.id).init(updatedPoint);
+    this.#pointPresenter.get(updatedPoint.id).init(updatedPoint, this.#pointCommon);
   };
 
   #handleModeChange = () => {
@@ -88,7 +81,7 @@ export default class BoardPresenter {
       onDataChange: this.#handlePointChange,
       onModeChange: this.#handleModeChange,
     });
-    pointPresenter.init(point);
+    pointPresenter.init(point, this.#pointCommon);
     this.#pointPresenter.set(point.id, pointPresenter);
   }
 

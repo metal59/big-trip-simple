@@ -28,12 +28,12 @@ const sortPrice = (pointA, pointB) => {
   return weight ?? pointB.basePrice - pointA.basePrice;
 };
 
-const pointAvaliableOfferIds = (point) => point.offersByType.find((o) => o.type === point.type).offers;
+const pointAvaliableOfferIds = (point, pointCommon) => pointCommon.offersByType.find((o) => o.type === point.type).offers;
 
-const calculateTotalPrice = (point) => {
+const calculateTotalPrice = (point, pointCommon) => {
   let price = point.basePrice;
   point.selectedOffers.map((selectedOfferId) => {
-    const offer = point.allOffers.find((o) => o.id === selectedOfferId);
+    const offer = pointCommon.allOffers.find((o) => o.id === selectedOfferId);
     price += offer.price;
   });
   return price;

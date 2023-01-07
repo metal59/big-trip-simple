@@ -5,7 +5,7 @@ import { getOffersByType } from '../mock/offers-by-type.js';
 import { getDestinations } from '../mock/destination.js';
 
 export default class PointsModel extends Observable{
-  #points = [...getPoints()];
+  #points = getPoints();
   #allOffers = getOffers();
   #offersByType = getOffersByType();
   #allDestinations = getDestinations();
