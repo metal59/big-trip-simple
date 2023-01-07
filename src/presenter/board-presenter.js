@@ -3,7 +3,6 @@ import SortView from '../view/sort-view.js';
 import PointListView from '../view/point-list-view.js';
 import NoPointView from '../view/no-point-view.js';
 import PointPresenter from './point-presenter.js';
-import { updateItem } from '../utils/common.js';
 import { sortDate, sortPrice } from '../utils/point.js';
 import { SortType } from '../const.js';
 
@@ -15,7 +14,6 @@ export default class BoardPresenter {
   #pointListComponent = new PointListView();
   #sortComponent = null;
 
-  #boardPoints = [];
   #pointCommon = null;
   #pointPresenter = new Map();
   #currentSortType = SortType.DAY;
@@ -26,15 +24,27 @@ export default class BoardPresenter {
     this.#pointCommonModel = pointCommonModel;
   }
 
+  get points() {
+    switch (this.#currentSortType) {
+      case SortType.DAY:
+        this.#pointsModel.points.sort(sortDate);
+        break;
+      case SortType.PRICE:
+        this.#pointsModel.points.sort(sortPrice);
+        break;
+    }
+
+    return this.#pointsModel.points;
+  }
+
   init() {
-    this.#boardPoints = this.#pointsModel.points;
     this.#pointCommon = this.#pointCommonModel.pointCommon;
 
     this.#renderBoard();
   }
 
   #handlePointChange = (updatedPoint) => {
-    this.#boardPoints = updateItem(this.#boardPoints, updatedPoint);
+    // Здесь будем вызывать обновление модели
     this.#pointPresenter.get(updatedPoint.id).init(updatedPoint, this.#pointCommon);
   };
 
@@ -42,21 +52,8 @@ export default class BoardPresenter {
     this.#pointPresenter.forEach((presenter) => presenter.resetView());
   };
 
-  #sortPoints(sortType) {
-    switch (sortType) {
-      case SortType.DAY:
-        this.#boardPoints.sort(sortDate);
-        break;
-      case SortType.PRICE:
-        this.#boardPoints.sort(sortPrice);
-        break;
-    }
-
-    this.#currentSortType = sortType;
-  }
-
   #handleSortTypeChange = (sortType) => {
-    this.#sortPoints(sortType);
+    this.#currentSortType = sortType;
     this.#clearPointList();
     this.#renderPointList();
   };
@@ -90,16 +87,15 @@ export default class BoardPresenter {
 
   #renderPointList() {
     render(this.#pointListComponent, this.#boardContainer);
-    this.#boardPoints.forEach((point) => this.#renderPoint(point));
+    this.points.forEach((point) => this.#renderPoint(point));
   }
 
   #renderBoard() {
-    if (this.#boardPoints.length === 0) {
+    if (this.points.length === 0) {
       this.#renderNoPoints();
       return;
     }
 
-    this.#sortPoints(this.#currentSortType);
     this.#renderSort();
     this.#renderPointList();
   }
