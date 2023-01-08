@@ -13,6 +13,7 @@ const boardPresenter = new BoardPresenter({
   boardContainer: mainContentElement,
   pointsModel,
   pointCommonModel,
+  filterModel,
 });
 const filterPresenter = new FilterPresenter({
   filterContainer: filterContainerElement,

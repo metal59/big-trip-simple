@@ -5,11 +5,13 @@ import NoPointView from '../view/no-point-view.js';
 import PointPresenter from './point-presenter.js';
 import { sortDate, sortPrice, calculateTotalPrice } from '../utils/point.js';
 import { SortType, UpdateType, UserAction } from '../const.js';
+import { filter } from '../utils/filter.js';
 
 export default class BoardPresenter {
   #boardContainer = null;
   #pointsModel = null;
   #pointCommonModel = null;
+  #filterModel = null;
 
   #pointListComponent = new PointListView();
   #sortComponent = null;
@@ -19,28 +21,35 @@ export default class BoardPresenter {
   #pointPresenter = new Map();
   #currentSortType = SortType.DAY;
 
-  constructor({ boardContainer, pointsModel, pointCommonModel }) {
+  constructor({ boardContainer, pointsModel, pointCommonModel, filterModel }) {
     this.#boardContainer = boardContainer;
     this.#pointsModel = pointsModel;
     this.#pointCommonModel = pointCommonModel;
+    this.#filterModel = filterModel;
+
     this.#pointsModel.addObserver(this.#handleModelEvent);
+    this.#filterModel.addObserver(this.#handleModelEvent);
   }
 
   get points() {
+    const filterType = this.#filterModel.filter;
+    const points = this.#pointsModel.points;
+    const filteredPoints = filter[filterType](points);
+
     switch (this.#currentSortType) {
       case SortType.DAY:
-        this.#pointsModel.points.sort(sortDate);
+        filteredPoints.sort(sortDate);
         break;
       case SortType.PRICE:
-        this.#pointsModel.points.forEach((point) => {
+        filteredPoints.forEach((point) => {
           point.totalPrice = calculateTotalPrice(point, this.#pointCommon);
         });
-        this.#pointsModel.points.sort(sortPrice);
-        this.#pointsModel.points.forEach((point) => delete point.totalPrice);
+        filteredPoints.sort(sortPrice);
+        filteredPoints.forEach((point) => delete point.totalPrice);
         break;
     }
 
-    return this.#pointsModel.points;
+    return filteredPoints;
   }
 
   init() {
