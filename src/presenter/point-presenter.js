@@ -20,15 +20,15 @@ export default class PointPresenter {
   #pointCommon = null;
   #mode = Mode.DEFAULT;
 
-  constructor({ pointListContainer, onDataChange, onModeChange }) {
+  constructor({ pointListContainer, pointCommon, onDataChange, onModeChange }) {
     this.#pointListContainer = pointListContainer;
+    this.#pointCommon = pointCommon;
     this.#handleDataChange = onDataChange;
     this.#handleModeChange = onModeChange;
   }
 
-  init(point, pointCommon) {
+  init(point) {
     this.#point = point;
-    this.#pointCommon = pointCommon;
 
     const prevPointComponent = this.#pointComponent;
     const prevPointEditComponent = this.#pointEditComponent;
@@ -104,7 +104,7 @@ export default class PointPresenter {
   #handleFormSubmit = (point) => {
     this.#handleDataChange(
       UserAction.UPDATE_POINT,
-      UpdateType.MINOR,
+      UpdateType.PATCH,
       point,
     );
     this.#replaceFormToEvent();
