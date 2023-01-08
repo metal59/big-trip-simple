@@ -23,9 +23,9 @@ const sortDate = (pointA, pointB) => {
 };
 
 const sortPrice = (pointA, pointB) => {
-  const weight = getWeightForNullParam(pointA.basePrice, pointB.basePrice);
+  const weight = getWeightForNullParam(pointA.totalPrice, pointB.totalPrice);
 
-  return weight ?? pointB.basePrice - pointA.basePrice;
+  return weight ?? pointB.totalPrice - pointA.totalPrice;
 };
 
 const pointAvaliableOfferIds = (point, pointCommon) => pointCommon.offersByType.find((o) => o.type === point.type).offers;
@@ -39,4 +39,6 @@ const calculateTotalPrice = (point, pointCommon) => {
   return price;
 };
 
-export { sortDate, sortPrice, pointAvaliableOfferIds, calculateTotalPrice };
+const isDatesEqual = (dateA, dateB) => (dateA === null && dateB === null) || dayjs(dateA).isSame(dateB, 'D');
+
+export { sortDate, sortPrice, pointAvaliableOfferIds, calculateTotalPrice, isDatesEqual };

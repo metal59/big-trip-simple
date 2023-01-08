@@ -3,7 +3,7 @@ import SortView from '../view/sort-view.js';
 import PointListView from '../view/point-list-view.js';
 import NoPointView from '../view/no-point-view.js';
 import PointPresenter from './point-presenter.js';
-import { sortDate, sortPrice } from '../utils/point.js';
+import { sortDate, sortPrice, calculateTotalPrice } from '../utils/point.js';
 import { SortType, UpdateType, UserAction } from '../const.js';
 
 export default class BoardPresenter {
@@ -32,7 +32,11 @@ export default class BoardPresenter {
         this.#pointsModel.points.sort(sortDate);
         break;
       case SortType.PRICE:
+        this.#pointsModel.points.forEach((point) => {
+          point.totalPrice = calculateTotalPrice(point, this.#pointCommon);
+        });
         this.#pointsModel.points.sort(sortPrice);
+        this.#pointsModel.points.forEach((point) => delete point.totalPrice);
         break;
     }
 
@@ -50,11 +54,6 @@ export default class BoardPresenter {
   };
 
   #handleViewAction = (actionType, updateType, update) => {
-    console.log('handleViewAction', actionType, updateType, update);
-    // Здесь будем вызывать обновление модели.
-    // actionType - действие пользователя, нужно чтобы понять, какой метод модели вызвать
-    // updateType - тип изменений, нужно чтобы понять, что после нужно обновить
-    // update - обновленные данные
     switch (actionType) {
       case UserAction.UPDATE_POINT:
         this.#pointsModel.updatePoint(updateType, update);
@@ -69,11 +68,6 @@ export default class BoardPresenter {
   };
 
   #handleModelEvent = (updateType, data) => {
-    console.log('handleModelEvent', updateType, data);
-    // В зависимости от типа изменений решаем, что делать:
-    // - обновить часть списка (например, когда поменялось описание)
-    // - обновить список (например, когда задача ушла в архив)
-    // - обновить всю доску (например, при переключении фильтра)
     switch (updateType) {
       case UpdateType.PATCH:
         this.#pointPresenter.get(data.id).init(data);
@@ -127,16 +121,6 @@ export default class BoardPresenter {
     this.#pointPresenter.set(point.id, pointPresenter);
   }
 
-  #clearPointList() {
-    this.#pointPresenter.forEach((presenter) => presenter.destroy());
-    this.#pointPresenter.clear();
-  }
-
-  #renderPointList() {
-    render(this.#pointListComponent, this.#boardContainer);
-    this.points.forEach((point) => this.#renderPoint(point));
-  }
-
   #clearBoard({ resetSortType = false } = {}) {
     this.#pointPresenter.forEach((presenter) => presenter.destroy());
     this.#pointPresenter.clear();
@@ -150,13 +134,14 @@ export default class BoardPresenter {
   }
 
   #renderBoard() {
-    if (this.points.length === 0) {
+    const points = this.points;
+    if (points.length === 0) {
       this.#renderNoPoints();
       return;
     }
 
     this.#renderSort();
     render(this.#pointListComponent, this.#boardContainer);
-    this.#renderPoints(this.points);
+    this.#renderPoints(points);
   }
 }

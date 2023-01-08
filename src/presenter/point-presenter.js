@@ -1,7 +1,8 @@
 import { render, replace, remove } from '../framework/render.js';
 import PointView from '../view/point-view.js';
 import PointEditView from '../view/point-edit-view.js';
-import {UserAction, UpdateType} from '../const.js';
+import { UserAction, UpdateType } from '../const.js';
+import { isDatesEqual, calculateTotalPrice } from '../utils/point.js';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -101,16 +102,26 @@ export default class PointPresenter {
     this.#replaceEventToForm();
   };
 
-  #handleFormSubmit = (point) => {
+  #handleFormSubmit = (update) => {
+    const isPatchUpdate =
+      isDatesEqual(this.#point.dateFrom, update.dateFrom) &&
+      calculateTotalPrice(this.#point, this.#pointCommon) === calculateTotalPrice(update, this.#pointCommon);
+
     this.#handleDataChange(
       UserAction.UPDATE_POINT,
-      UpdateType.PATCH,
-      point,
+      isPatchUpdate ? UpdateType.PATCH : UpdateType.MINOR,
+      update,
     );
     this.#replaceFormToEvent();
   };
 
-  #handleDeleteClick = () => { };
+  #handleDeleteClick = (point) => {
+    this.#handleDataChange(
+      UserAction.DELETE_POINT,
+      UpdateType.MINOR,
+      point,
+    );
+  };
 
   #handleCloseClick = () => {
     this.#pointEditComponent.reset(this.#point);
