@@ -1,4 +1,4 @@
-import {render} from './framework/render.js';
+import { render } from './framework/render.js';
 import NewPointButtonView from './view/new-point-button-view.js';
 import BoardPresenter from './presenter/board-presenter.js';
 import FilterPresenter from './presenter/filter-presenter.js';
@@ -12,19 +12,33 @@ const siteHeaderElement = document.querySelector('.trip-main');
 const pointsModel = new PointsModel();
 const pointCommonModel = new PointCommonModel();
 const filterModel = new FilterModel();
+
 const boardPresenter = new BoardPresenter({
   boardContainer: mainContentElement,
   pointsModel,
   pointCommonModel,
   filterModel,
+  onNewPointDestroy: handleNewPointFormClose,
 });
 const filterPresenter = new FilterPresenter({
   filterContainer: filterContainerElement,
   filterModel,
   pointsModel
 });
+const newPointButtonComponent = new NewPointButtonView({
+  onClick: handleNewPointButtonClick
+});
 
-render(new NewPointButtonView(), siteHeaderElement);
+function handleNewPointFormClose() {
+  newPointButtonComponent.element.disabled = false;
+}
+
+function handleNewPointButtonClick() {
+  boardPresenter.createPoint();
+  newPointButtonComponent.element.disabled = true;
+}
+
+render(newPointButtonComponent, siteHeaderElement);
 
 filterPresenter.init();
 boardPresenter.init();

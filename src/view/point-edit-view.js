@@ -9,12 +9,9 @@ import 'flatpickr/dist/flatpickr.min.css';
 
 const BLANK_POINT = {
   basePrice: 0,
-  dateFrom: new Date(),
-  dateTo: new Date(),
   destId: -1,
   selectedOffers: [],
   type: POINT_TYPES[0],
-  id: null,
 };
 
 const createPointEditEventTypeItemsTemplate = () => POINT_TYPES.map((pointType, i) => `
@@ -78,10 +75,7 @@ const createPointEditOffersDestinationTemplate = (point, pointCommon) => (`
 `);
 
 const createPointEditTemplate = (point, pointCommon) => {
-  const isNewPoint = (point.id === null);
-  if (isNewPoint) {
-    point = { ...point, ...BLANK_POINT };
-  }
+  const isNewPoint = !('id' in point);
   const { basePrice, dateFrom, dateTo, type } = point;
   const destinationDataList = pointCommon.allDestinations.map((dest) => `<option value="${dest.name}">`).join('');
 
@@ -166,7 +160,12 @@ export default class PointEditView extends AbstractStatefulView {
   #handleCloseClick = null;
   #datepicker = { from: null, to: null };
 
-  constructor({ point, pointCommon, onFormSubmit, onDeleteClick, onCloseClick }) {
+  constructor(
+    { point = {
+      ...BLANK_POINT,
+      dateFrom: new Date(),
+      dateTo: new Date(),
+    }, pointCommon, onFormSubmit, onDeleteClick, onCloseClick }) {
     super();
     this._setState(PointEditView.parsePointToState(point));
     this.#pointCommon = pointCommon;
@@ -201,7 +200,10 @@ export default class PointEditView extends AbstractStatefulView {
   _restoreHandlers() {
     this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
     this.element.querySelector('.event__reset-btn').addEventListener('click', this.#deleteClickHandler);
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeClickHandler);
+    const rollupButtonElement = this.element.querySelector('.event__rollup-btn');
+    if (rollupButtonElement) {
+      rollupButtonElement.addEventListener('click', this.#closeClickHandler);
+    }
     this.element.querySelector('.event__type-group').addEventListener('change', this.#pointTypeChangeHandler);
     this.element.querySelector('.event__input--price').addEventListener('input', this.#priceInputHandler);
     if (pointAvaliableOfferIds(this._state, this.#pointCommon).length > 0) {
