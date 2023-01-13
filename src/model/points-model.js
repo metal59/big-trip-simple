@@ -1,8 +1,18 @@
 import Observable from '../framework/observable.js';
 import { getPoints } from '../mock/point.js';
 
-export default class PointsModel extends Observable{
+export default class PointsModel extends Observable {
+  #pointsApiService = null;
   #points = getPoints();
+
+  constructor({ pointsApiService }) {
+    super();
+    this.#pointsApiService = pointsApiService;
+
+    this.#pointsApiService.points.then((points) => {
+      console.log(points);
+    });
+  }
 
   get points() {
     return this.#points;

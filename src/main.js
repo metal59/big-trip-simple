@@ -5,11 +5,17 @@ import FilterPresenter from './presenter/filter-presenter.js';
 import PointsModel from './model/points-model.js';
 import PointCommonModel from './model/point-common-model.js';
 import FilterModel from './model/filter-model.js';
+import PointsApiService from './points-api-service.js';
+
+const AUTHORIZATION = 'Basic tsVaL7Ypbm9c4UVjKcef';
+const END_POINT = 'https://19.ecmascript.pages.academy/big-trip-simple';
 
 const mainContentElement = document.querySelector('.trip-events');
 const filterContainerElement = document.querySelector('.trip-controls__filters');
 const siteHeaderElement = document.querySelector('.trip-main');
-const pointsModel = new PointsModel();
+const pointsModel = new PointsModel({
+  pointsApiService: new PointsApiService(END_POINT, AUTHORIZATION)
+});
 const pointCommonModel = new PointCommonModel();
 const filterModel = new FilterModel();
 
