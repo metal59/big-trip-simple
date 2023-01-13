@@ -25,7 +25,8 @@ export default class BoardPresenter {
   #newPointPresenter = null;
   #currentSortType = SortType.DAY;
   #filterType = FilterType.EVERYTHING;
-  #isLoading = true;
+  #isPointLoading = true;
+  #isPointCommonLoading = true;
 
   constructor({ boardContainer, pointsModel, pointCommonModel, filterModel, onNewPointDestroy }) {
     this.#boardContainer = boardContainer;
@@ -42,6 +43,7 @@ export default class BoardPresenter {
     });
 
     this.#pointsModel.addObserver(this.#handleModelEvent);
+    this.#pointCommonModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
   }
 
@@ -108,10 +110,20 @@ export default class BoardPresenter {
         this.#clearBoard({ resetSortType: true });
         this.#renderBoard();
         break;
-      case UpdateType.INIT:
-        this.#isLoading = false;
-        remove(this.#loadingComponent);
-        this.#renderBoard();
+      case UpdateType.INIT_POINT:
+        this.#isPointLoading = false;
+        if (!this.#isPointLoading && !this.#isPointCommonLoading) {
+          remove(this.#loadingComponent);
+          this.#renderBoard();
+        }
+        break;
+      case UpdateType.INIT_POINT_COMMON:
+        this.#pointCommon = this.#pointCommonModel.pointCommon;
+        this.#isPointCommonLoading = false;
+        if (!this.#isPointLoading && !this.#isPointCommonLoading) {
+          remove(this.#loadingComponent);
+          this.#renderBoard();
+        }
         break;
     }
   };
@@ -180,7 +192,7 @@ export default class BoardPresenter {
   }
 
   #renderBoard() {
-    if (this.#isLoading) {
+    if (this.#isPointLoading || this.#isPointCommonLoading) {
       this.#renderLoading();
       return;
     }

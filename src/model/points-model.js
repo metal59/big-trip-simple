@@ -22,7 +22,7 @@ export default class PointsModel extends Observable {
       this.#points = [];
     }
 
-    this._notify(UpdateType.INIT);
+    this._notify(UpdateType.INIT_POINT);
   }
 
   async updatePoint(updateType, update) {

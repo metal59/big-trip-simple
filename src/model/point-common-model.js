@@ -1,15 +1,32 @@
 import Observable from '../framework/observable.js';
-import { getOffers } from '../mock/offer.js';
-import { getDestinations } from '../mock/destination.js';
+import { UpdateType } from '../const.js';
 
 export default class PointCommonModel extends Observable {
-  #allOffers = getOffers();
-  #allDestinations = getDestinations();
+  #pointCommonApiService = null;
+  #pointCommon = null;
+
+  constructor({ pointCommonApiService }) {
+    super();
+    this.#pointCommonApiService = pointCommonApiService;
+  }
 
   get pointCommon() {
-    return {
-      allOffers: this.#allOffers,
-      allDestinations: this.#allDestinations,
-    };
+    return this.#pointCommon;
+  }
+
+  async init() {
+    let allOffers, allDestinations;
+    try {
+      [allOffers, allDestinations] = await Promise.all([
+        this.#pointCommonApiService.offers,
+        this.#pointCommonApiService.destinations
+      ]);
+    } catch (err) {
+      allOffers = [];
+      allDestinations = [];
+    }
+    this.#pointCommon = { allOffers, allDestinations };
+
+    this._notify(UpdateType.INIT_POINT_COMMON);
   }
 }
