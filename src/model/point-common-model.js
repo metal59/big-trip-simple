@@ -21,12 +21,11 @@ export default class PointCommonModel extends Observable {
         this.#pointCommonApiService.offers,
         this.#pointCommonApiService.destinations
       ]);
+      this.#pointCommon = { allOffers, allDestinations };
+      this._notify(UpdateType.INIT_POINT_COMMON);
     } catch (err) {
-      allOffers = [];
-      allDestinations = [];
+      this._notify(UpdateType.ERROR_LOADING);
+      throw new Error('Error loading data from server');
     }
-    this.#pointCommon = { allOffers, allDestinations };
-
-    this._notify(UpdateType.INIT_POINT_COMMON);
   }
 }

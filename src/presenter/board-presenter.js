@@ -3,6 +3,7 @@ import SortView from '../view/sort-view.js';
 import PointListView from '../view/point-list-view.js';
 import NoPointView from '../view/no-point-view.js';
 import LoadingView from '../view/loading-view.js';
+import ErrorLoadingView from '../view/error-loading-view.js';
 import PointPresenter from './point-presenter.js';
 import NewPointPresenter from './new-point-presenter.js';
 import { sortDate, sortPrice, calculateTotalPrice } from '../utils/point.js';
@@ -17,6 +18,7 @@ export default class BoardPresenter {
 
   #pointListComponent = new PointListView();
   #loadingComponent = new LoadingView();
+  #ErrorLoadingView = new ErrorLoadingView();
   #sortComponent = null;
   #noPointComponent = null;
 
@@ -27,6 +29,7 @@ export default class BoardPresenter {
   #filterType = FilterType.EVERYTHING;
   #isPointLoading = true;
   #isPointCommonLoading = true;
+  #isErrorLoading = false;
 
   constructor({ boardContainer, pointsModel, pointCommonModel, filterModel, onNewPointDestroy }) {
     this.#boardContainer = boardContainer;
@@ -125,6 +128,11 @@ export default class BoardPresenter {
           this.#renderBoard();
         }
         break;
+      case UpdateType.ERROR_LOADING:
+        this.#isErrorLoading = true;
+        remove(this.#loadingComponent);
+        this.#renderBoard();
+        break;
     }
   };
 
@@ -153,6 +161,10 @@ export default class BoardPresenter {
 
   #renderLoading() {
     render(this.#loadingComponent, this.#boardContainer);
+  }
+
+  #renderErrorLoading() {
+    render(this.#ErrorLoadingView, this.#boardContainer);
   }
 
   #renderNoPoints() {
@@ -192,6 +204,11 @@ export default class BoardPresenter {
   }
 
   #renderBoard() {
+    if (this.#isErrorLoading) {
+      this.#renderErrorLoading();
+      return;
+    }
+
     if (this.#isPointLoading || this.#isPointCommonLoading) {
       this.#renderLoading();
       return;

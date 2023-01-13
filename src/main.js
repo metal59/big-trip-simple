@@ -53,6 +53,6 @@ boardPresenter.init();
 Promise.all([
   pointsModel.init(),
   pointCommonModel.init()])
-  .finally(() => {
+  .then(() => {
     render(newPointButtonComponent, siteHeaderElement);
-  });
+  }).catch(() => { });
