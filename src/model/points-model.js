@@ -72,6 +72,7 @@ export default class PointsModel extends Observable {
       dateFrom: point['date_from'] !== null ? new Date(point['date_from']) : point['date_from'], // На клиенте дата хранится как экземпляр Date
       dateTo: point['date_to'] !== null ? new Date(point['date_to']) : point['date_to'], // На клиенте дата хранится как экземпляр Date
       destId: point['destination'],
+      selectedOffers: point['offers'],
     };
 
     // Ненужные ключи мы удаляем
@@ -79,6 +80,7 @@ export default class PointsModel extends Observable {
     delete adaptedPoint['date_from'];
     delete adaptedPoint['date_to'];
     delete adaptedPoint['destination'];
+    delete adaptedPoint['offers'];
 
     return adaptedPoint;
   }
