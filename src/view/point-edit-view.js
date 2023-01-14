@@ -8,7 +8,7 @@ import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 
 const BLANK_POINT = {
-  basePrice: 0,
+  basePrice: 1,
   destId: -1,
   selectedOffers: [],
   type: POINT_TYPES[0],
@@ -224,10 +224,13 @@ export default class PointEditView extends AbstractStatefulView {
 
   #priceInputHandler = (evt) => {
     evt.preventDefault();
-    if (evt.target.value === '') { evt.target.value = '0'; }
+    if (evt.target.value === '') { evt.target.value = '1'; }
     const parsedPrice = parseInt(evt.target.value, 10);
-    evt.target.value = isNaN(parsedPrice) ? this._state.basePrice : parsedPrice;
-    this._state.basePrice = parseInt(evt.target.value, 10);
+    if (isNaN(parsedPrice) || parsedPrice < 1) {
+      evt.target.value = this._state.basePrice;
+    } else {
+      this._state.basePrice = parsedPrice;
+    }
   };
 
   #offerChangeHandler = (evt) => {
