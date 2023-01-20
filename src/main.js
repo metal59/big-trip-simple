@@ -8,7 +8,7 @@ import FilterModel from './model/filter-model.js';
 import PointsApiService from './api/points-api-service.js';
 import PointCommonApiService from './api/point-common-api-service.js';
 
-const AUTHORIZATION = 'Basic tsVaL7Ypbm9c4UVjKcef';
+const AUTHORIZATION = 'Basic tsVaL7Ypbm9c4UVjKcef1';
 const END_POINT = 'https://19.ecmascript.pages.academy/big-trip-simple';
 
 const mainContentElement = document.querySelector('.trip-events');
